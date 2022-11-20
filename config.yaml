@@ -9,7 +9,6 @@ log-level: info
 ipv6: false
 geodata-mode: true
 external-controller: 0.0.0.0:9090
-external-ui: dashboard/dist
 tcp-concurrent: false
 # interface-name: ""
 enable-process: false
