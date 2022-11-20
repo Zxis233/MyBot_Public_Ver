@@ -1,0 +1,152 @@
+tproxy-port: 9898
+redir-port: 9897
+mixed-port: 7890
+mode: rule
+allow-lan: true
+unified-delay: true
+bind-address: '*'
+log-level: info
+ipv6: false
+geodata-mode: true
+external-controller: 0.0.0.0:9090
+external-ui: dashboard/dist
+tcp-concurrent: false
+# interface-name: ""
+enable-process: false
+geodata-loader: memconservative
+# routing-mark: 233
+inbound-tfo: false
+secret: ""
+# geox-url: {mmdb: "", geoip: "", geosite: ""}
+hosts: {"cacerts.digicert.com": "104.21.21.147", "ota.googlezip.net": "127.0.0.1", "ota-cache1.googlezip.net": "127.0.0.1", "ota-cache2.googlezip.net": "127.0.0.1"}
+dns:
+  enable: true
+  listen: 0.0.0.0:53
+  ipv6: true
+  default-nameserver:
+    - 114.114.114.114
+    - 223.5.5.5
+  enhanced-mode: redir-host
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  fallback:
+    - https://doh.opendns.com/dns-query
+    - https://dns.adguard.com/dns-query
+    - https://doh.dns.sb/dns-query
+    - https://dns64.cloudflare-dns.com/dns-query
+    - https://dns64.dns.google/dns-query
+    - https://dns.google/dns-query
+    - https://cloudflare-dns.com/dns-query
+proxies:
+  - name: "Hysteria"
+    type: hysteria
+    server: www.zxis.tk
+    port: 40404
+    auth_str: esiiiiiing
+    alpn: ['h3']
+    protocol: wechat-video
+    up: 220
+    down: 1100
+    sni: www.zxis.tk
+    skip-cert-verify: false
+    recv_window_conn: 115343360
+    recv_window: 461373440
+    disable_mtu_discovery: true
+#proxy-providers: #在这配置订阅
+#  Ayanami: #随便的机场名字
+#    type: http  #订阅类型
+#    url: "https://dashboard.bazinnn.ga/api/v1/client/subscribe?token=0397d6fbf6b106a74783e639461c718e"  #机场订阅链接
+#    path: ./proxy_providers/Ayanami.yaml  #下载好的文件的存储位置
+#    interval: 3600  #自动更新订阅间隔，秒为单位
+proxy-groups:
+  - name: "PROXY"
+    type: select
+    #use:
+    #  - Ayanami
+    proxies:
+      - Hysteria
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+  apple:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/apple.txt"
+    path: ./ruleset/apple.yaml
+    interval: 86400
+  google:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/google.txt"
+    path: ./ruleset/google.yaml
+    interval: 86400
+  proxy:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/proxy.txt"
+    path: ./ruleset/proxy.yaml
+    interval: 86400
+  direct:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
+    path: ./ruleset/direct.yaml
+    interval: 86400
+  private:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/private.txt"
+    path: ./ruleset/private.yaml
+    interval: 86400
+  gfw:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/gfw.txt"
+    path: ./ruleset/gfw.yaml
+    interval: 86400
+  tld-not-cn:
+    type: http
+    behavior: domain
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/tld-not-cn.txt"
+    path: ./ruleset/tld-not-cn.yaml
+    interval: 86400
+  telegramcidr:
+    type: http
+    behavior: ipcidr
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/telegramcidr.txt"
+    path: ./ruleset/telegramcidr.yaml
+    interval: 86400
+  cncidr:
+    type: http
+    behavior: ipcidr
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt"
+    path: ./ruleset/cncidr.yaml
+    interval: 86400
+  lancidr:
+    type: http
+    behavior: ipcidr
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/lancidr.txt"
+    path: ./ruleset/lancidr.yaml
+    interval: 86400
+rules:
+  - IP-CIDR,127.0.0.1/32,REJECT,no-resolve
+  - DOMAIN,clash.razord.top,DIRECT
+  - DOMAIN,yacd.haishan.me,DIRECT
+  - RULE-SET,private,DIRECT
+  - RULE-SET,reject,REJECT
+  - RULE-SET,apple,DIRECT
+  - RULE-SET,gfw,PROXY
+  - RULE-SET,google,PROXY
+  - RULE-SET,proxy,PROXY
+  - RULE-SET,direct,DIRECT
+  - RULE-SET,lancidr,DIRECT
+  - RULE-SET,cncidr,DIRECT
+  - RULE-SET,telegramcidr,PROXY
+  - GEOIP,LAN,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,PROXY
